@@ -1,0 +1,32 @@
+---
+- name: Configure QA server
+  hosts: qa_server1
+  become: true
+  tasks:
+    - name: Install required packages
+      yum:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - lsof
+        - wget
+        - passwd
+        - docker
+        - unzip
+        - java-11*
+
+    - name: Create directories
+      file:
+        path: /opt/qa/spg
+        state: directory
+
+    - name: Create log file
+      file:
+        path: /opt/qa/spg/spg.log
+        state: touch
+
+    - name: Start Docker service
+      service:
+        name: docker
+        state: started
+        enabled: yes
