@@ -13,7 +13,6 @@
         - passwd
         - docker
         - unzip
-        - java-11*
 
     - name: Create directories
       file:

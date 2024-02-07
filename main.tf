@@ -18,7 +18,7 @@ resource "null_resource" "copy_ssh_key" {
   connection {
     type        = "ssh"
     user        = "ec2-user"
-    private_key = tls_private_key.ec2_key.private_key_pem
+    private_key = tls_private_key.instance_key.private_key_pem
     host        = aws_instance.qa_server1.public_ip
   }
 
