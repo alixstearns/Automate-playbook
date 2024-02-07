@@ -1,0 +1,26 @@
+---
+- name: Deploy Spring Boot App
+  hosts: qa_server1
+  become: yes
+  tasks:
+    - name: Delete old artifact
+      file:
+        path: /opt/qa/spg/*.jar
+        state: absent
+
+    - name: Check if an app is running on port 8082
+      shell: lsof -i :8082 | awk 'NR==2{print $2}'
+      register: existing_process
+      ignore_errors: yes
+
+    - name: Kill existing process if running
+      shell: kill -9 {{ existing_process.stdout }}
+      when: existing_process.stdout is defined
+
+    - name: Download new artifact from JFrog
+      shell: wget --username admin --password devops http://198.58.119.40:8081/repository/prof-repo/bioMedical-0.0.6-SNAPSHOT.jar -P /opt/qa/spg/
+      args:
+        chdir: /opt/qa/spg/
+
+    - name: Bring up the app in the background
+      shell: nohup java -jar /opt/qa/spg/*.jar > /opt/qa/spg.log 2>&1 &

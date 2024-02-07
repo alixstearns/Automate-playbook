@@ -32,4 +32,3 @@ resource "null_resource" "copy_ssh_key" {
     ]
   }
 }
-

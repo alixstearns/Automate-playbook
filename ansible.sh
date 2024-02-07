@@ -27,22 +27,11 @@ git clone https://github.com/alixstearns/automate-playbook.git /home/ec2-user/qa
 cp -r automate-playbook/* /home/ec2-user/qa-dev
 rm -rf automate-playbook
 
+# Fetch the private IP address
+ip_address=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
 
-# Download the ec2.py script and ec2.ini configuration file for dynamic inventory
-sudo wget https://raw.githubusercontent.com/ansible/ansible/stable-2.9/contrib/inventory/ec2.py
-sudo wget https://raw.githubusercontent.com/ansible/ansible/stable-2.9/contrib/inventory/ec2.ini
+# Update the inventory file
+sudo bash -c "echo 'qa_server1 ansible_host=$ip_address ansible_user=ec2-user' > inventory.yml"
 
-# Make the ec2.py script executable
-chmod +x ec2.py
-
-# Run the ec2.py script to generate the dynamic inventory
-inventory_file="/home/ec2-user/qa-dev/inventory.yml"
-./ec2.py --list > $inventory_file
-
-# Run your Ansible playbook using the generated dynamic inventory
-ansible-playbook -i $inventory_file /home/ec2-user/qa-dev/ansible.yml
-
-# Clean up - remove the downloaded files
-rm -f ec2.py ec2.ini
-
-exit 0
+# Run the playbook
+ansible-playbook -i inventory.yml ansible.yml
