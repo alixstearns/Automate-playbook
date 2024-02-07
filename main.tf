@@ -6,20 +6,30 @@ resource "aws_instance" "qa_server1" {
   tags = {
     Name = "qa-server1"
   }
-
-provisioner "local-exec" {
+}
+/*provisioner "local-exec" {
     command = "ansible-playbook -i ${aws_instance.qa_server1.private_ip}, ansible.yaml"
+*/
 
+ # Here we are using the Null resource to copy our ssh key into the master server.
+resource "null_resource" "copy_ssh_key" {
+  depends_on = [aws_instance.qa_server1]
 
-  /*provisioner "remote-exec" {
+  connection {
+    type        = "ssh"
+    user        = "ec2-user"
+    private_key = tls_private_key.ec2_key.private_key_pem
+    host        = aws_instance.qa_server1.public_ip
+  }
+
+  provisioner "file" {
+    source      = "key_name.pem"
+    destination = "/home/ec2-user/key_name.pem"
+  }
+  provisioner "remote-exec" {
     inline = [
-      "sudo yum update -y",
-      "sudo yum install -y ansible"
+      "chmod 400 /home/ec2-user/key_name.pem",
     ]
-  }*/
-
+  }
 }
-# Run Ansible playbook
- # command = ansible-playbook -i localhost, "/c/Users/ehong/week15-Jenkins/devops-lab/DEVOPS-UTRAINS/ansible-jenkins/ansible.yml"
 
-}
