@@ -34,4 +34,4 @@ ip_address=$(curl -s http://169.254.169.254/latest/meta-data/local-ipv4)
 sudo bash -c "echo 'qa_server1 ansible_host=$ip_address ansible_user=ec2-user' > inventory.yml"
 
 # Run the playbook
-ansible-playbook -i inventory.yml ansible.yml
+ansible-playbook -i /home/ec2-user/qa-dev/inventory.yml /home/ec2-user/qa-dev/ansible.yml
