@@ -18,7 +18,7 @@
       when: existing_process.stdout is defined
 
     - name: Download new artifact from JFrog
-      shell: wget --username admin --password devops http://198.58.119.40:8081/repository/prof-repo/bioMedical-0.0.6-SNAPSHOT.jar -P /opt/qa/spg/
+      shell: curl -uadmin:AP8gqnnJFGjpmxzN9a1p4zdFjHe -O "http://44.202.89.29:8081/artifactory/geoapp/bioMedical-0.0.2-SNAPSHOT.jar" -P /opt/qa/spg/
       args:
         chdir: /opt/qa/spg/
 
